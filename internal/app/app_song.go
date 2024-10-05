@@ -52,7 +52,7 @@ func StartService(conf configs.Config) error {
 func NewDB() (*pgx.Conn, error) {
 	c, err := configs.NewConfig()
 	if err != nil {
-		return nil, fmt.Errorf("Can't load config in restaurant repo: %v\n", err)
+		return nil, fmt.Errorf("Can't load db config: %v\n", err)
 	}
 
 	psqlInfo := fmt.Sprint(c.Conn)
@@ -60,9 +60,9 @@ func NewDB() (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), psqlInfo)
 
 	m, err := migrate.New(
-		"file://../song_base/migrations",
+		"file://../song_service/migrations",
 		"postgres://"+c.Migrate,
-		//root:root@localhost:5444/time_tracker?sslmode=disable",
+		//root:root@localhost:5444/song_service?sslmode=disable",
 	)
 	if err != nil {
 		log.Println(err)
