@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	"song_service/internal/models"
 )
@@ -13,7 +14,13 @@ type SongService struct {
 }
 
 func NewSongService(sr SongRepositorier) *SongService {
-	return &SongService{sr: sr}
+	opts := &slog.HandlerOptions{
+		AddSource: true,
+		Level:     slog.LevelDebug,
+	}
+	handler := slog.NewJSONHandler(os.Stdout, opts)
+	logger := slog.New(handler)
+	return &SongService{sr: sr, log: logger}
 }
 
 type SongRepositorier interface {

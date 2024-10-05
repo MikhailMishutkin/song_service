@@ -6,7 +6,7 @@ migrateup:
 	migrate -path migrations -database "postgres://root:root@localhost:5444/song_service?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path migrations -database "postgres://root:root@localhost:5444/song_service?sslmode=disable" -verbose down -1
+	migrate -path migrations -database "postgres://root:root@localhost:5444/song_service?sslmode=disable" -verbose down
 
 http:
 	go run ./cmd/service/main.go

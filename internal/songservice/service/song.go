@@ -10,7 +10,9 @@ import (
 
 // first check existence names of group and/or song, then create uniq record with details
 func (s *SongService) CreateSong(ctx context.Context, song *models.Song) error {
+	s.log.Info("CreateSong in service started")
 	idGr, err := s.sr.CheckExistGroup(ctx, song)
+	s.log.Debug("CreateSong checked group existence", "id", idGr)
 	if err != nil && idGr == 0 {
 		return fmt.Errorf("something wrong with check group existence: %v", err)
 	} else if idGr == 0 {
@@ -31,14 +33,16 @@ func (s *SongService) CreateSong(ctx context.Context, song *models.Song) error {
 	}
 
 	idU, err := s.sr.CheckExistSongUniq(ctx, idGr, idS)
-	if err != nil && idU == 0 {
-		return fmt.Errorf("something wrong with check unique song existence: %v", err)
+
+	if idU != 0 {
+		return errors.New("song of such group is exist in db, no new record do")
 	} else if idU == 0 {
 		idU, err = s.sr.CreateSongUniqRec(ctx, idGr, idS)
 		if err != nil {
 			return err
 		}
 	}
+
 	song.Id = idU
 
 	err = s.sr.AddDetails(ctx, song)

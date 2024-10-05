@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"song_service/internal/models"
-	"time"
 )
 
 func (h *HTTPSongHandle) GetSongInfo(input *models.SongInput) (song *models.Song, err error) {
@@ -16,10 +15,10 @@ func (h *HTTPSongHandle) GetSongInfo(input *models.SongInput) (song *models.Song
 	params.Add("group", input.Group)
 	params.Add("song", input.Song)
 
-	url := "https://localhost:9000/info?" + params.Encode()
+	url := "http://localhost:9000/info?" + params.Encode()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
-	defer cancel()
+	ctx := context.Background()
+
 	req, err := http.NewRequestWithContext(
 		ctx,
 		"GET",

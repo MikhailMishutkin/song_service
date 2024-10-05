@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"io"
 	"net/http"
 	"os"
 	"song_service/internal/models"
@@ -23,18 +22,11 @@ func NewBaseHandle() *BaseHandle {
 
 func (h *BaseHandle) GetSongInfo(w http.ResponseWriter, r *http.Request) {
 
-	body, err := io.ReadAll(r.Body)
+	params := mux.Vars(r)
 
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-	}
-
-	var song *models.SongInput
-	err = json.Unmarshal(body, &song)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("corrupt json data" + err.Error()))
+	song := &models.SongInput{
+		Group: params["group"],
+		Song:  params["song"],
 	}
 
 	stringSong := song.Group + " " + song.Song
@@ -67,7 +59,7 @@ func (h *BaseHandle) GetSongInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *BaseHandle) RegisterBase(router *mux.Router) {
-	router.HandleFunc("/info", h.GetSongInfo).Methods("POST")
+	router.HandleFunc("/info", h.GetSongInfo).Methods("GET").Queries("group", "{group}", "song", "{song}")
 
 }
 
