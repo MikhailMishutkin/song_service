@@ -70,7 +70,7 @@ func (s *SongService) DeleteSong(ctx context.Context, song *models.Song) error {
 	return err
 }
 
-// ...
+// make pagination in bussines logic to simplify sql-request
 func (s *SongService) GetAllSongs(
 	ctx context.Context,
 	fp *models.FiltAndPagin,
@@ -80,14 +80,24 @@ func (s *SongService) GetAllSongs(
 ) {
 	var values []interface{}
 	var where []string
+	var i int = 1
 	for k, v := range fp.FilterMap {
 		values = append(values, v)
-		where = append(where, fmt.Sprintf("%s = ?", k))
+		where = append(where, fmt.Sprintf("%s = $%v", k, i))
+		i++
 	}
 
 	fp.Values = values
 	fp.Where = where
 	songs, err = s.sr.GetAllSongs(ctx, fp)
+	if fp.Limit != 0 && fp.Offset != 0 {
+		songs = songs[(fp.Offset - 1):fp.Limit]
+	} else if fp.Limit != 0 && fp.Offset == 0 {
+		songs = songs[fp.Offset:fp.Limit]
+	} else if fp.Limit == 0 && fp.Offset != 0 {
+		songs = songs[(fp.Offset - 1):]
+	}
+
 	return songs, err
 }
 

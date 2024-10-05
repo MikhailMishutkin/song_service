@@ -32,8 +32,6 @@ func (h *HTTPSongHandle) RegisterSong(router *mux.Router) {
 	router.HandleFunc("/edit/{id}", h.UpdateSong).Methods("PUT")
 	router.HandleFunc("/delete/{id}", h.DeleteSong).Methods("DELETE")
 	router.HandleFunc("/gettext/{id}", h.GetSongText).Methods("GET")
-	router.HandleFunc("/getall", h.GetAllSongs).Methods(
-		"Get",
-	).Queries("id", "{id}", "group", "{group}", "song", "{song}", "release_date", "{release_date}", "text", "{text}", "link", "{link}")
+	router.HandleFunc("/getall", h.GetAllSongs).Methods("Get")
 
 }

@@ -134,16 +134,22 @@ func (r *Repo) GetSongText(ctx context.Context, fp *models.FiltAndPagin) (songTe
 // ...
 func (r *Repo) GetAllSongs(ctx context.Context, fp *models.FiltAndPagin) (songs []*models.Song, err error) {
 
-	query := "SELECT song_uniq.id, groups.group_name, songs.song, details.release_date, details.text, details.link FROM song_unique " +
-		"INNER JOIN groups ON song_unique.group_id = groups.id " +
-		"INNER JOIN songs ON song_unique.song_id = songs.id " +
-		"INNER JOIN details ON song_unique.id = details.uniq_id " +
-		" WHERE " + strings.Join(fp.Where, " AND ") + " LIMIT " + fmt.Sprintf("%v", fp.Limit) + " OFFSET " + fmt.Sprintf("%v", fp.Offset)
-
 	var rows pgx.Rows
+	if len(fp.FilterMap) == 0 {
+		rows, err = r.DB.Query(ctx, "SELECT song_unique.id, groups.group_name, songs.song, details.release_date, details.text, details.link FROM song_unique "+
+			"INNER JOIN groups ON song_unique.group_id = groups.id "+
+			"INNER JOIN songs ON song_unique.song_id = songs.id "+
+			"INNER JOIN details ON song_unique.id = details.uniq_id ",
+		)
+	} else {
+		rows, err = r.DB.Query(ctx, "SELECT song_unique.id, groups.group_name, songs.song, details.release_date, details.text, details.link FROM song_unique "+
+			"INNER JOIN groups ON song_unique.group_id = groups.id "+
+			"INNER JOIN songs ON song_unique.song_id = songs.id "+
+			"INNER JOIN details ON song_unique.id = details.uniq_id "+
+			" WHERE "+strings.Join(fp.Where, " AND "), fp.Values...)
+	}
 
-	rows, err = r.DB.Query(ctx, query, fp.Values...)
-
+	r.log.Debug("row", "row", rows)
 	// TODO
 	if err != nil {
 		return nil, fmt.Errorf("something wrong with get songs info: ", err)

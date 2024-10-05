@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"io"
-	"log"
 	"net/http"
 	"song_service/internal/models"
 	"strconv"
@@ -171,7 +170,7 @@ func (h *HTTPSongHandle) GetSongText(w http.ResponseWriter, r *http.Request) {
 //	@Failure		500		{integer}	integer 1
 //	@Router			/getall [get]
 func (h *HTTPSongHandle) GetAllSongs(w http.ResponseWriter, r *http.Request) {
-	log.Println("GetTaskCost ivoked")
+
 	var err error
 
 	strLimit := r.URL.Query().Get("limit")

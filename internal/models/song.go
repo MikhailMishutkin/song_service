@@ -9,7 +9,6 @@ type Song struct {
 	Link        string `json:"link,omitempty"`
 }
 
-// TODO
 type SongDetails struct {
 	ReleaseDate string `json:"release_date,omitempty"`
 	Text        string `json:"text,omitempty"`
@@ -19,9 +18,4 @@ type SongDetails struct {
 type SongInput struct {
 	Group string `json:"group"`
 	Song  string `json:"song"`
-}
-
-// TODO
-type SongResponse struct {
-	UUID string
 }
